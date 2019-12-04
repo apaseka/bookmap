@@ -1,8 +1,8 @@
 package com.bookmap.model;
 
-import java.util.Comparator;
+import java.util.Objects;
 
-public class Order implements Comparator<Order> {
+public class Order implements Comparable<Order> {
 
     private long id;
     private boolean isBuy;
@@ -49,6 +49,22 @@ public class Order implements Comparator<Order> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Order)) return false;
+        Order order = (Order) o;
+        return id == order.id &&
+                isBuy == order.isBuy &&
+                price == order.price &&
+                size == order.size;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, isBuy, price, size);
+    }
+
+    @Override
     public String toString() {
         return "Order{" +
                 "id=" + id +
@@ -59,11 +75,12 @@ public class Order implements Comparator<Order> {
     }
 
     @Override
-    public int compare(Order o1, Order o2) {
-        if (o1.getPrice() == o2.getPrice()) {
-            return o1.getId() > o2.getId() ? 1 : -1;
-        } else {
-            return o1.isBuy() ? o2.getPrice() - o1.getPrice() : o1.getPrice() - o2.getPrice();
+    public int compareTo(Order o) {
+        if (this.getPrice() > o.getPrice()) {
+            return !isBuy ? 1 : -1;
+        } else if (this.getPrice() < o.getPrice()) {
+            return !isBuy ? -1 : 1;
         }
+        return 0;
     }
 }
