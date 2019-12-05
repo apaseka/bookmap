@@ -16,19 +16,15 @@ public class Exchange implements QueryInterface, AdvancedExchangeInterface {
         return restingOrders;
     }
 
-    private List<Order> getSort(List<Order> orders) {
-        Collections.sort(orders);
-        return orders;
-    }
-
     @Override
     public void send(long orderId, boolean isBuy, int price, int size) throws RequestRejectedException {
         Order order = new Order(orderId, isBuy, price, size);
+        Collections.sort(restingOrders);
         if (order.isBuy()) {
-            List<Order> appropriateOrders = getSort(restingOrders).stream().filter(o -> o.getPrice() <= order.getPrice() && !o.isBuy()).collect(Collectors.toList());
+            List<Order> appropriateOrders = restingOrders.stream().filter(o -> o.getPrice() <= order.getPrice() && !o.isBuy()).collect(Collectors.toList());
             matchOrders(order, appropriateOrders, restingOrders);
         } else {
-            List<Order> appropriateOrders = getSort(restingOrders).stream().filter(o -> o.getPrice() >= order.getPrice() && o.isBuy()).collect(Collectors.toList());
+            List<Order> appropriateOrders = restingOrders.stream().filter(o -> o.getPrice() >= order.getPrice() && o.isBuy()).collect(Collectors.toList());
             matchOrders(order, appropriateOrders, restingOrders);
         }
     }
