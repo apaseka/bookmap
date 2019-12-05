@@ -12,21 +12,23 @@ public class Exchange implements QueryInterface, AdvancedExchangeInterface {
 
     private List<Order> restingOrders = new ArrayList<>();
 
+    @SuppressWarnings(value = "all")
     public List<Order> getRestingOrders() {
         return restingOrders;
     }
 
+    @SuppressWarnings(value = "all")
     @Override
     public void send(long orderId, boolean isBuy, int price, int size) throws RequestRejectedException {
         Order order = new Order(orderId, isBuy, price, size);
         Collections.sort(restingOrders);
+        List<Order> ordersToMatchWith;
         if (order.isBuy()) {
-            List<Order> appropriateOrders = restingOrders.stream().filter(o -> o.getPrice() <= order.getPrice() && !o.isBuy()).collect(Collectors.toList());
-            matchOrders(order, appropriateOrders, restingOrders);
+            ordersToMatchWith = restingOrders.stream().filter(o -> o.getPrice() <= order.getPrice() && !o.isBuy()).collect(Collectors.toList());
         } else {
-            List<Order> appropriateOrders = restingOrders.stream().filter(o -> o.getPrice() >= order.getPrice() && o.isBuy()).collect(Collectors.toList());
-            matchOrders(order, appropriateOrders, restingOrders);
+            ordersToMatchWith = restingOrders.stream().filter(o -> o.getPrice() >= order.getPrice() && o.isBuy()).collect(Collectors.toList());
         }
+        matchOrders(order, ordersToMatchWith, restingOrders);
     }
 
     private void matchOrders(Order order, List<Order> appropriateOrders, List<Order> restingOrders) {
