@@ -13,7 +13,7 @@ class ExchangeTest {
         exchange.send(1L, false, 100, 200);
         exchange.send(2L, false, 90, 150);
         exchange.send(3L, false, 200, 300);
-        Assertions.assertEquals(650, exchange.getRestingSellOrders().stream().mapToInt(Order::getSize).sum());
+        Assertions.assertEquals(650, exchange.getRestingOrders().stream().mapToInt(Order::getSize).sum());
         Assertions.assertEquals(90, exchange.getLowestSellPrice());
 
         exchange.send(11L, true, 200, 300);
@@ -34,13 +34,13 @@ class ExchangeTest {
         exchange.send(13L, true, 200, 210);
         Assertions.assertEquals(600 + 20 - 210, exchange.getTotalSizeAtPrice(200));
         Assertions.assertEquals(260, exchange.getTotalSizeAtPrice(100));
-        Assertions.assertTrue(exchange.getRestingSellOrders().contains(new Order(5L, false, 200, 90)));
-        Assertions.assertTrue(exchange.getRestingSellOrders().contains(new Order(3L, false, 200, 320)));
+        Assertions.assertTrue(exchange.getRestingOrders().contains(new Order(5L, false, 200, 90)));
+        Assertions.assertTrue(exchange.getRestingOrders().contains(new Order(3L, false, 200, 320)));
 
         exchange.send(14L, true, 80, 40);
         Assertions.assertEquals(100, exchange.getHighestBuyPrice());
 
         exchange.cancel(5L);
-        Assertions.assertFalse(exchange.getRestingSellOrders().contains(new Order(5L, false, 200, 90)));
+        Assertions.assertFalse(exchange.getRestingOrders().contains(new Order(5L, false, 200, 90)));
     }
 }
