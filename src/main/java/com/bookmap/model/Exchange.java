@@ -21,13 +21,14 @@ public class Exchange implements QueryInterface, AdvancedExchangeInterface {
     @Override
     public void send(long orderId, boolean isBuy, int price, int size) throws RequestRejectedException {
         Order order = new Order(orderId, isBuy, price, size);
-        Collections.sort(restingOrders);
         List<Order> ordersToMatchWith;
         if (order.isBuy()) {
             ordersToMatchWith = restingOrders.stream().filter(o -> o.getPrice() <= order.getPrice() && !o.isBuy()).collect(Collectors.toList());
+
         } else {
             ordersToMatchWith = restingOrders.stream().filter(o -> o.getPrice() >= order.getPrice() && o.isBuy()).collect(Collectors.toList());
         }
+        Collections.sort(ordersToMatchWith);
         matchOrders(order, ordersToMatchWith, restingOrders);
     }
 
